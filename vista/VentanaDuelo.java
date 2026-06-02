@@ -33,50 +33,31 @@ public class VentanaDuelo extends JFrame {
     private static final Color COLOR_CARTA_MAGIA     = new Color(10, 60, 30);
     private static final Color COLOR_CARTA_TRAMPA    = new Color(50, 10, 50);
     private static final Color COLOR_BORDE           = new Color(80, 60, 10);
-    private static final Color COLOR_BOTON_ACCION    = new Color(30, 0, 60);
-    private static final Color COLOR_BOTON_HOVER     = new Color(70, 10, 120);
     private static final Color COLOR_LOG_FONDO       = new Color(5, 5, 20);
 
     private Juego juegoActual;
     private Jugador jugador1;
     private Jugador jugador2;
-
-    // variable para saber si ya robo carta este turno
     private boolean yaRoboEsteTurno = false;
-
-    // LP de arriba
     private JLabel labelNombreJ1;
     private JLabel labelLpJ1;
     private JLabel labelNombreJ2;
     private JLabel labelLpJ2;
     private JLabel labelTurnoActual;
     private JLabel labelFase;
-
-    // campos de monstruos
     private JPanel panelCampoOponente;
     private JPanel panelCampoJugador;
-
-    // trampas del oponente (conteo)
     private JLabel labelTrampasOponente;
-
-    // mano del jugador actual
     private JPanel panelManoJugador;
-
-    // area de log / informacion
     private JTextArea areaLog;
-
-    // botones de acciones
     private JButton botonRobarCarta;
     private JButton botonTerminarTurno;
-
-    // contadores de cartas en mazo
     private JLabel labelMazoJ1;
     private JLabel labelMazoJ2;
 
     public VentanaDuelo(String nombreDuelista1, String nombreDuelista2) {
         super("Yu-Gi-Oh! Duelo — " + nombreDuelista1 + " VS " + nombreDuelista2);
 
-        // crear jugadores y repartir el mazo
         jugador1 = new Jugador(nombreDuelista1);
         jugador2 = new Jugador(nombreDuelista2);
         Mazo.repartir(jugador1, jugador2);
@@ -87,7 +68,6 @@ public class VentanaDuelo extends JFrame {
         construirUI();
         actualizarTodaLaUI();
 
-        // mensaje de bienvenida en el log
         registrarEnLog("════════════════════════════════════════");
         registrarEnLog("   ¡¡ DUELO INICIADO !! ");
         registrarEnLog("  " + jugador1.getNombre() + " VS " + jugador2.getNombre());
@@ -116,11 +96,9 @@ public class VentanaDuelo extends JFrame {
         splitCentral.setDividerSize(4);
         splitCentral.setDividerLocation(700);
 
-        // lado izquierdo: campo de batalla
         JPanel panelCampoBatalla = crearPanelCampoBatalla();
         splitCentral.setLeftComponent(panelCampoBatalla);
 
-        // lado derecho: log + acciones
         JPanel panelDerechoCompleto = crearPanelDerechoLog();
         splitCentral.setRightComponent(panelDerechoCompleto);
 
@@ -130,7 +108,6 @@ public class VentanaDuelo extends JFrame {
         add(panelInferior, BorderLayout.SOUTH);
     }
 
-    // panel con los LP y el turno actual
     private JPanel crearPanelSuperior() {
         JPanel panel = new JPanel(new BorderLayout(10, 0));
         panel.setBackground(new Color(12, 12, 35));
@@ -155,7 +132,6 @@ public class VentanaDuelo extends JFrame {
         panelInfoJ1.add(labelLpJ1);
         panelInfoJ1.add(labelMazoJ1);
 
-        // turno actual (centro)
         JPanel panelCentroTurno = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         panelCentroTurno.setBackground(new Color(12, 12, 35));
         labelTurnoActual = new JLabel("TURNO DE: ...");
@@ -167,7 +143,6 @@ public class VentanaDuelo extends JFrame {
         panelCentroTurno.add(labelTurnoActual);
         panelCentroTurno.add(labelFase);
 
-        // info jugador 2 (derecha)
         JPanel panelInfoJ2 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         panelInfoJ2.setBackground(new Color(12, 12, 35));
         labelNombreJ2 = new JLabel("Jugador 2");
@@ -191,13 +166,11 @@ public class VentanaDuelo extends JFrame {
         return panel;
     }
 
-    // panel central izquierdo: campo de batalla con zona oponente y zona jugador
     private JPanel crearPanelCampoBatalla() {
         JPanel panel = new JPanel(new GridLayout(2, 1, 0, 6));
         panel.setBackground(FONDO_OSCURO);
         panel.setBorder(new EmptyBorder(6, 6, 6, 3));
 
-        // zona oponente (arriba, en rojo oscuro)
         JPanel zonaOponente = new JPanel(new BorderLayout(0, 4));
         zonaOponente.setBackground(FONDO_PANEL_ENEMIGO);
         zonaOponente.setBorder(crearBordeTitulado(" Campo del Oponente", new Color(200, 80, 80)));
@@ -262,7 +235,6 @@ public class VentanaDuelo extends JFrame {
         scrollLog.setPreferredSize(new Dimension(0, 300));
         scrollLog.getVerticalScrollBar().setBackground(FONDO_PANEL);
 
-        // botones de accion
         JPanel panelBotones = crearPanelBotonesAccion();
 
         panel.add(scrollLog, BorderLayout.CENTER);
@@ -330,7 +302,6 @@ public class VentanaDuelo extends JFrame {
     }
 
 
-    // robar carta al inicio del turno
     private void accionRobarCarta() {
         if (yaRoboEsteTurno) {
             JOptionPane.showMessageDialog(this,
@@ -352,7 +323,6 @@ public class VentanaDuelo extends JFrame {
             return;
         }
 
-        // la carta robada es la ultima en la mano despues de robarCarta()
         ArrayList<Carta> manoActual = actual.getMano();
         if (!manoActual.isEmpty()) {
             Carta robada = manoActual.get(manoActual.size() - 1);
@@ -366,7 +336,6 @@ public class VentanaDuelo extends JFrame {
         actualizarTodaLaUI();
     }
 
-    // cuando se hace click en una carta de la mano — menu de opciones
     private void accionJugarCartaDeMano(Carta carta) {
         Jugador actual = juegoActual.getJugadorActual();
         Jugador enemigo = juegoActual.getJugadorEnemigo();
@@ -398,7 +367,6 @@ public class VentanaDuelo extends JFrame {
         verificarFinDelJuego();
     }
 
-    // invocacion de monstruo con o sin sacrificio
     private void accionInvocarMonstruo(Monstruo monstruo, Jugador actual) {
         registrarEnLog("");
         registrarEnLog("[ Invocación: " + monstruo.getNombre() + " ]");
@@ -464,7 +432,6 @@ public class VentanaDuelo extends JFrame {
         }
     }
 
-    // activar carta magica con todos sus casos
     private void accionActivarMagia(CartaMagica carta, Jugador actual, Jugador enemigo) {
         registrarEnLog("");
         registrarEnLog("[ Carta Mágica: " + carta.getNombre() + " ]");
@@ -540,7 +507,6 @@ public class VentanaDuelo extends JFrame {
         }
     }
 
-    // colocar trampa boca abajo
     private void accionColocarTrampa(CartaTrampa trampa, Jugador actual) {
         registrarEnLog("");
         registrarEnLog("[ Colocar Trampa: ??? ]");
@@ -552,7 +518,6 @@ public class VentanaDuelo extends JFrame {
         }
     }
 
-    // menu completo de ataque
     private void mostrarMenuAtaque() {
         Jugador actual = juegoActual.getJugadorActual();
         Jugador enemigo = juegoActual.getJugadorEnemigo();
@@ -575,7 +540,6 @@ public class VentanaDuelo extends JFrame {
             return;
         }
 
-        // filtrar los que pueden atacar
         ArrayList<Monstruo> atacantesDisponibles = new ArrayList<>();
         for (Monstruo m : actual.getCampo()) {
             if (m.puedeAtacar()) atacantesDisponibles.add(m);
@@ -588,7 +552,6 @@ public class VentanaDuelo extends JFrame {
             return;
         }
 
-        // elegir atacante
         String[] opcionesAtacante = new String[atacantesDisponibles.size()];
         for (int i = 0; i < atacantesDisponibles.size(); i++) {
             Monstruo m = atacantesDisponibles.get(i);
@@ -619,11 +582,9 @@ public class VentanaDuelo extends JFrame {
         registrarEnLog("[ Fase de Batalla ]");
         registrarEnLog("  " + actual.getNombre() + " ataca con: " + atacante.getNombre());
 
-        // el oponente puede activar trampas
         Contexto ctxTrampa = null;
         if (enemigo.tieneTrampas()) {
-            // preguntar al oponente si quiere activar trampa
-            // hay que cambiar brevemente el foco al oponente
+
             ctxTrampa = procesarTrampasEnemigas(enemigo, actual, atacante);
         }
 
@@ -643,7 +604,6 @@ public class VentanaDuelo extends JFrame {
             return;
         }
 
-        // elegir defensor (o ataque directo)
         Monstruo defensor = null;
         if (!enemigo.getCampo().isEmpty()) {
             String[] opcionesDefensor = new String[enemigo.getCampo().size()];
@@ -701,8 +661,6 @@ public class VentanaDuelo extends JFrame {
         verificarFinDelJuego();
     }
 
-    // maneja la activacion de trampas del enemigo — dialogo especial
-    // es un metodo bastante critico del juego, lo deje separado
     private Contexto procesarTrampasEnemigas(Jugador duenioTrampa, Jugador atacante, Monstruo monstruoAtacante) {
         ArrayList<CartaTrampa> trampasDisponibles = new ArrayList<>();
         for (CartaTrampa t : duenioTrampa.getTrampas()) {
@@ -711,7 +669,6 @@ public class VentanaDuelo extends JFrame {
 
         if (trampasDisponibles.isEmpty()) return null;
 
-        // preguntar al dueño de las trampas si quiere activar
         String[] opcionesTrampas = new String[trampasDisponibles.size() + 1];
         opcionesTrampas[0] = "No activar ninguna";
         for (int i = 0; i < trampasDisponibles.size(); i++) {
@@ -719,7 +676,6 @@ public class VentanaDuelo extends JFrame {
                 + " — " + trampasDisponibles.get(i).getDescripcion();
         }
 
-        // dialogo para el dueño de las trampas
         JOptionPane.showMessageDialog(this,
             " Es el momento de " + duenioTrampa.getNombre() + " para activar trampas.",
             "Fase de Trampas", JOptionPane.INFORMATION_MESSAGE);
@@ -736,7 +692,6 @@ public class VentanaDuelo extends JFrame {
 
         if (elegida == null || elegida.equals(opcionesTrampas[0])) return null;
 
-        // encontrar la trampa seleccionada
         CartaTrampa trampaElegida = null;
         for (int i = 0; i < trampasDisponibles.size(); i++) {
             if (opcionesTrampas[i + 1].equals(elegida)) {
@@ -755,18 +710,16 @@ public class VentanaDuelo extends JFrame {
         duenioTrampa.getTrampas().remove(trampaElegida);
         duenioTrampa.agregarAlCementerio(trampaElegida);
 
-        registrarEnLog("   ¡TRAMPA ACTIVADA! → " + trampaElegida.getNombre());
+        registrarEnLog("   ¡TRAMPA ACTIVADA! -> " + trampaElegida.getNombre());
         registrarEnLog("    " + trampaElegida.getDescripcion());
 
         return ctx;
     }
 
-    // un pequeño helper para mostrar info del atacante en el dialogo
     private String attackante(Monstruo m) {
         return m.getNombre() + " · ATK: " + m.getAtk();
     }
 
-    // mostrar cementerio del jugador actual
     private void mostrarCementerio() {
         Jugador actual = juegoActual.getJugadorActual();
         Jugador enemigo = juegoActual.getJugadorEnemigo();
@@ -814,13 +767,12 @@ public class VentanaDuelo extends JFrame {
         registrarEnLog("  Turno terminado.");
         registrarEnLog("────────────────────────────────────────");
 
-        juegoActual.faseFinal();  // esto cambia el turno internamente
-        yaRoboEsteTurno = false;  // reset para el nuevo turno
+        juegoActual.faseFinal();// esto cambia el turno internamente
+        yaRoboEsteTurno = false;// reset para el nuevo turno
 
         botonRobarCarta.setEnabled(true);
         labelFase.setText("[Inicio del Turno]");
 
-        // notificar el cambio de turno
         String nombreNuevo = juegoActual.getJugadorActual().getNombre();
         registrarEnLog("");
         registrarEnLog("   Ahora es el turno de: " + nombreNuevo);
@@ -828,13 +780,11 @@ public class VentanaDuelo extends JFrame {
 
         actualizarTodaLaUI();
 
-        // mostrar un aviso de cambio de turno
         JOptionPane.showMessageDialog(this,
             "¡Fin del turno!\n\nAhora le toca a: " + nombreNuevo,
             "Cambio de Turno", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // actualiza TODA la UI — se llama despues de cada accion importante
     private void actualizarTodaLaUI() {
         actualizarPanelLP();
         actualizarCampoOponente();
@@ -843,7 +793,6 @@ public class VentanaDuelo extends JFrame {
         labelTurnoActual.setText("TURNO: " + juegoActual.getJugadorActual().getNombre().toUpperCase());
     }
 
-    // actualiza los LP de ambos jugadores con colores segun el nivel
     private void actualizarPanelLP() {
         // jugador 1
         labelNombreJ1.setText(jugador1.getNombre());
@@ -858,14 +807,12 @@ public class VentanaDuelo extends JFrame {
         labelMazoJ2.setText("Mazo: " + jugador2.getCartasMazo() + "  ");
     }
 
-    // devuelve el color correcto segun los LP actuales
     private Color getColorLP(int lp) {
         if (lp > 4000) return COLOR_LP_NORMAL;
         if (lp > 2000) return COLOR_LP_MEDIO;
         return COLOR_LP_BAJO;
     }
 
-    // actualiza los monstruos del oponente en su zona del campo
     private void actualizarCampoOponente() {
         Jugador enemigo = juegoActual.getJugadorEnemigo();
         panelCampoOponente.removeAll();
@@ -884,14 +831,12 @@ public class VentanaDuelo extends JFrame {
             }
         }
 
-        // actualizar contador de trampas del oponente
         labelTrampasOponente.setText("  Trampas ocultas: " + enemigo.getTrampas().size() + "  ");
 
         panelCampoOponente.revalidate();
         panelCampoOponente.repaint();
     }
 
-    // actualiza los monstruos del jugador actual en su zona
     private void actualizarCampoJugador() {
         Jugador actual = juegoActual.getJugadorActual();
         panelCampoJugador.removeAll();
@@ -913,7 +858,6 @@ public class VentanaDuelo extends JFrame {
         panelCampoJugador.repaint();
     }
 
-    // actualiza las cartas en la mano del jugador actual
     private void actualizarManoJugador() {
         Jugador actual = juegoActual.getJugadorActual();
         panelManoJugador.removeAll();
@@ -958,7 +902,6 @@ public class VentanaDuelo extends JFrame {
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // borde segun si puede atacar o no
         if (esMio && !m.puedeAtacar()) {
             btn.setBorder(BorderFactory.createLineBorder(new Color(80, 80, 80), 1));
             btn.setBackground(new Color(15, 25, 50));
@@ -971,7 +914,6 @@ public class VentanaDuelo extends JFrame {
         return btn;
     }
 
-    // crea un boton para una carta en la mano del jugador
     private JButton crearBotonCartaMano(Carta c) {
         Color colorFondo;
         String infoExtra = "";
@@ -1021,7 +963,6 @@ public class VentanaDuelo extends JFrame {
         return btn;
     }
 
-    // muestra un popup con la info detallada de un monstruo
     private void mostrarInfoMonstruo(Monstruo m) {
         String info = "Nombre:   " + m.getNombre() + "\n"
             + "Nivel:    " + m.getNivel() + "\n"
@@ -1035,7 +976,6 @@ public class VentanaDuelo extends JFrame {
 
 
 
-    // verifica si el juego termino y muestra el resultado
     private void verificarFinDelJuego() {
         if (!juegoActual.hayGanador()) return;
 
@@ -1051,11 +991,9 @@ public class VentanaDuelo extends JFrame {
         registrarEnLog("  LP finales: " + jugPerdedor.getNombre() + " → " + jugPerdedor.getVida());
         registrarEnLog("════════════════════════════════════════");
 
-        // deshabilitar botones para que no se pueda seguir jugando
         botonRobarCarta.setEnabled(false);
         botonTerminarTurno.setEnabled(false);
 
-        // dialogo final tematico
         String mensajeFinal =
             "  FIN DEL DUELO  \n\n"
             + "¡¡ " + ganador.toUpperCase() + " GANA EL DUELO !!\n\n"
@@ -1069,7 +1007,6 @@ public class VentanaDuelo extends JFrame {
             "¡Duelo Terminado!",
             JOptionPane.INFORMATION_MESSAGE);
 
-        // preguntar si quieren jugar de nuevo
         int respuesta = JOptionPane.showConfirmDialog(
             this,
             "¿Quieres iniciar un nuevo duelo?",
@@ -1086,7 +1023,6 @@ public class VentanaDuelo extends JFrame {
     }
 
 
-    // crea un boton de accion con el estilo del juego
     private JButton crearBotonAccion(String texto, Color colorFondo) {
         JButton btn = new JButton(texto);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
@@ -1111,7 +1047,6 @@ public class VentanaDuelo extends JFrame {
         return btn;
     }
 
-    // crea un borde con titulo estilizado
     private TitledBorder crearBordeTitulado(String titulo, Color colorTitulo) {
         TitledBorder borde = BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(colorTitulo, 1),
@@ -1124,7 +1059,6 @@ public class VentanaDuelo extends JFrame {
         return borde;
     }
 
-    // agrega texto al area de log y hace scroll automatico al final
     public void registrarEnLog(String mensaje) {
         areaLog.append(mensaje + "\n");
         // scroll automatico al fondo

@@ -5,13 +5,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 
-/**
- * Pantalla inicial del juego Yu-Gi-Oh!
- * Pide los nombres de los dos duelistas y arranca el duelo.
- * 
- * Nota: use null layout en el panel del logo porque queria que quedara
- * centrado de una manera especifica y con GridLayout no me quedaba bien
- */
 public class PantallaInicio extends JFrame {
 
     // colores principales del tema oscuro
@@ -42,7 +35,6 @@ public class PantallaInicio extends JFrame {
         setResizable(false);
         getContentPane().setBackground(COLOR_FONDO);
 
-        // layout principal — BorderLayout para separar logo, form, y footer
         setLayout(new BorderLayout(0, 0));
 
         add(crearPanelLogo(),      BorderLayout.NORTH);
@@ -50,7 +42,7 @@ public class PantallaInicio extends JFrame {
         add(crearPanelFooter(),    BorderLayout.SOUTH);
     }
 
-    // crea el panel con el titulo animado del juego
+    //panel con el titulo animado
     private JPanel crearPanelLogo() {
         JPanel panelLogo = new JPanel();
         panelLogo.setBackground(COLOR_FONDO);
@@ -69,13 +61,11 @@ public class PantallaInicio extends JFrame {
         labelSubtitulo.setForeground(COLOR_TEXTO_CLARO);
         labelSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // linea decorativa
         JLabel labelLinea = new JLabel("════════════════════════════", SwingConstants.CENTER);
         labelLinea.setFont(new Font("Arial", Font.PLAIN, 14));
         labelLinea.setForeground(COLOR_DORADO_OSCURO);
         labelLinea.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // reglas rapidas
         JLabel labelReglas = new JLabel(
             "<html><center>8000 LP · 25 cartas · Monstruos, Magia y Trampas<br>"
             + "¡El primero en llegar a 0 LP o agotar su mazo pierde!</center></html>",
@@ -95,12 +85,10 @@ public class PantallaInicio extends JFrame {
         return panelLogo;
     }
 
-    // panel central con los campos de nombre
     private JPanel crearPanelFormulario() {
         JPanel panelExterno = new JPanel(new GridBagLayout());
         panelExterno.setBackground(COLOR_FONDO);
 
-        // panel interno con bordes dorados
         JPanel panelForm = new JPanel();
         panelForm.setBackground(COLOR_PANEL_OSCURO);
         panelForm.setLayout(new BoxLayout(panelForm, BoxLayout.Y_AXIS));
@@ -134,26 +122,21 @@ public class PantallaInicio extends JFrame {
         campoDuelista2 = crearCampoTexto("Nombre del Duelista 2...");
         campoDuelista2.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // label de error — empieza vacio
         labelMensajeError = new JLabel(" ");
         labelMensajeError.setFont(new Font("Arial", Font.ITALIC, 12));
         labelMensajeError.setForeground(Color.RED);
         labelMensajeError.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // boton de inicio
         botonIniciar = crearBotonEstilizado("  INICIAR DUELO  ");
         botonIniciar.setAlignmentX(Component.CENTER_ALIGNMENT);
         botonIniciar.setMaximumSize(new Dimension(300, 45));
 
-        // accion del boton
         botonIniciar.addActionListener(e -> validarYArrancarDuelo());
 
-        // tambien se puede presionar Enter en cualquier campo
         ActionListener enterListener = e -> validarYArrancarDuelo();
         campoDuelista1.addActionListener(enterListener);
         campoDuelista2.addActionListener(enterListener);
 
-        // agregar todo al panel del formulario
         panelForm.add(labelFormTitulo);
         panelForm.add(Box.createVerticalStrut(20));
         panelForm.add(labelD1);
@@ -172,7 +155,6 @@ public class PantallaInicio extends JFrame {
         return panelExterno;
     }
 
-    // footer con el mensaje de yugi
     private JPanel crearPanelFooter() {
         JPanel panelFooter = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelFooter.setBackground(COLOR_FONDO);
@@ -223,7 +205,6 @@ public class PantallaInicio extends JFrame {
         return campo;
     }
 
-    // crea un boton con el estilo del juego
     private JButton crearBotonEstilizado(String texto) {
         JButton boton = new JButton(texto);
         boton.setFont(new Font("Arial", Font.BOLD, 14));
@@ -236,7 +217,6 @@ public class PantallaInicio extends JFrame {
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // efecto hover
         boton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -251,9 +231,8 @@ public class PantallaInicio extends JFrame {
         return boton;
     }
 
-    // valida los campos y lanza la ventana del duelo
     private void validarYArrancarDuelo() {
-        // placeholders hardcodeados para chequear — un poco feo pero funciona
+
         String nombre1 = campoDuelista1.getText().trim();
         String nombre2 = campoDuelista2.getText().trim();
 
@@ -279,7 +258,6 @@ public class PantallaInicio extends JFrame {
 
         labelMensajeError.setText(" ");
 
-        // lanzar la ventana principal del duelo
         this.setVisible(false);
         VentanaDuelo ventanaDuelo = new VentanaDuelo(nombre1, nombre2);
         ventanaDuelo.setVisible(true);
